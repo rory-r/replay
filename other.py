@@ -2,6 +2,7 @@ import header
 import ui
 
 import os
+import certifi
 import requests
 import json
 import io
@@ -19,7 +20,7 @@ from urllib3 import disable_warnings
 
 CHAMPIONS = []
 ITEMS = defaultdict(list)
-KEYSTONES = ['6161', '6162', '6164', '6261', '6262', '6263', '6361', '6362', '6363']
+KEYSTONES = [6161, 6162, 6164, 6261, 6262, 6263, 6361, 6362, 6363]
 RUNES = {}
 SUMMONERS = {}
 aliases = {'ez':'Ezreal', 'gp':'Gangplank', 'j4':'JarvanIV', 'tf':'TwistedFate', 'ww':'Warwick', 'mf':'MissFortune'}
@@ -139,7 +140,7 @@ def save():
 
 # connect to the league client
 def client_get(url):
-    session = requests.Session()
+    session = requests.Session(cert=certifi.where())
     session.verify = False
     try:
         r = session.get('https://127.0.0.1:'+PORT+'/'+url, auth=('riot', KEY))
@@ -212,8 +213,8 @@ def download_legacy():
     urls, paths = ([], [])
     for c in champs:
         for i in range(len(champs[c])):
-            urls.append('https://ddragon.leagueoflegends.com/cdn/%s/img/champion/%s.png'%(champs[c][i], c))
-            paths.append(folder+'%s_%d.png'%(c, i))
+            urls.append('https://ddragon.leagueoflegends.com/cdn/{champs[c][i]}/img/champion/{c}.png')
+            paths.append(f'{folder}{c}_{i}.png')
     download_images(urls, paths)
 
     # download item images
@@ -226,8 +227,8 @@ def download_legacy():
     urls, paths = ([], [])
     for t in items:
         for i in range(len(items[t])):
-            urls.append('https://ddragon.leagueoflegends.com/cdn/%s/img/item/%s.png'%(items[t][i], t))
-            paths.append(folder+'%s_%d.png'%(t, i))
+            urls.append(f'https://ddragon.leagueoflegends.com/cdn/{items[t][i]}/img/item/{t}.png')
+            paths.append(f'{folder}{t}_{i}.png')
     download_images(urls, paths)
 
     # download masteries
@@ -235,8 +236,21 @@ def download_legacy():
     if not os.path.exists(folder):
         os.makedirs(folder)
     download_json('6.24.1', 'mastery.json')
-    urls = ['https://ddragon.leagueoflegends.com/cdn/6.24.1/img/mastery/%s.png'%k for k in KEYSTONES]
-    paths = [folder + k + '.png' for k in KEYSTONES]
+    urls = [f'https://ddragon.leagueoflegends.com/cdn/6.24.1/img/mastery/{k}.png' for k in KEYSTONES]
+    paths = [f'{folder}{k}.png' for k in KEYSTONES]
+    download_images(urls, paths)
+
+    # download summoners
+    folder = data_folder + 'legacy/summoner/'
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+        
+    with open(data_folder+'json/summoner_legacy.json') as f:
+        summoners = json.load(f)
+    urls, paths = ([], [])
+    for s in summoners:
+        urls.append(f'https://ddragon.leagueoflegends.com/cdn/{s["patch"]}/img/spell/{s["id"]}.png')
+        paths.append(f'{folder}{s["id"]}.png')
     download_images(urls, paths)
 
     header.settings["LEGACY"] = False
@@ -293,6 +307,7 @@ def update():
             folder = data_folder + 'rune/'
             if not os.path.exists(folder):
                 os.mkdir(folder)
+            print(RUNES)
             download_images(rune_urls, [folder + '%d.png'%r for r in RUNES.values()])
 
 
@@ -484,7 +499,8 @@ def build_lists():
         with open(folder + 'mastery.json', encoding="utf8") as file:
             for r in re.findall('.{4},"name":".*?(?=")', file.read()):
                 s = r[r.rfind('"') + 1:]
-                i = bisect_left(KEYSTONES, r[:4])
+                
+                i = bisect_left(KEYSTONES, int(r[:4]))
                 if i != len(KEYSTONES) and KEYSTONES[i] == r[:4]:
                     RUNES[s] = r[:4]
 
@@ -524,6 +540,14 @@ def build_lists():
                     key = s[pos : s.find('"',pos)]
                     pos += len(key)
                 SUMMONERS[key] = name
+    
+    if not os.path.exists(folder + 'summoner_legacy.json'):
+        ui.warn(folder + 'summoner_legacy.json DNE')
+    else:
+        with open(folder + 'summoner_legacy.json', encoding="utf8") as file:
+            summoner = json.load(file)
+            for s in summoner.keys():
+                ui.LEGACY_SUMMONER[s] = summoner[s]["id"]
 
 def search(text):
     from ui import display

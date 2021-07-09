@@ -5,14 +5,15 @@ from other import set_setting, search, save, download_patch,\
 import os
 import subprocess
 import math
-import webbrowser
+from webbrowser import open_new_tab
 from functools import lru_cache
 from enum import Enum
 from abc import ABC, abstractmethod
 
 from PyQt5.QtWidgets import QApplication, QLabel, QDialog, QVBoxLayout,\
      QHBoxLayout, QLineEdit, QGraphicsOpacityEffect, QWidget, QStackedLayout,\
-     QGridLayout, QScrollArea, QGraphicsRotation, QSizePolicy, QSpacerItem
+     QGridLayout, QScrollArea, QGraphicsRotation, QSizePolicy, QSpacerItem, \
+     QDesktopWidget
 from PyQt5.QtCore import QByteArray, Qt, pyqtSignal, QRectF, QRect, QSize,\
     QPoint, QPointF, QVariantAnimation, QAbstractAnimation, QThread
 from PyQt5.QtGui import QColor, QPixmap, QPainter, QImage, QBrush, QTransform
@@ -34,6 +35,7 @@ stylesheets = {}
 
 LEGACY_CHAMP = {}
 LEGACY_ITEM = {}
+LEGACY_SUMMONER = {}
 downloaded_patches = []
 downloading_patch = ""
 dlbtns = []
@@ -718,10 +720,11 @@ def replay_layout(r, longest):
         print('1.3')
         if header.settings['VIS'][VIS.SUMMS.value]:
             print('summs')
-            id1 = 35
-            id2 = 35
+            id1 = 33
+            id2 = 33
             if r.matchId in header.EXTRA_INFO.keys():
-                for i in range(len(header.EXTRA_INFO[r.matchId]['participantIdentities'])):
+                p = header.EXTRA_INFO[r.matchId]['participants'][0]
+                for i in range(1, len(header.EXTRA_INFO[r.matchId]['participantIdentities'])):
                     if header.EXTRA_INFO[r.matchId]['participantIdentities'][i]['player']['summonerName'] == header.settings['NAME']:
                         p = header.EXTRA_INFO[r.matchId]['participants'][i]
                         break
@@ -1314,7 +1317,7 @@ def display_match(replay_index):
         loobj.addLayout(loico)
 
     qlweb = textbutton("View on the web ↗", get_style("stats"), get_style("stats-hover"))
-    qlweb.clicked.connect(lambda: webbrowser.open_new_tab(header.settings["MATCH_URL"]+'/'+
+    qlweb.clicked.connect(lambda: open_new_tab(header.settings["MATCH_URL"]+'/'+
         header.settings["MATCH_LANGUAGE"]+"/#match-details/"+header.settings["MATCH_SERVER"]+
         '/'+ str(r.matchId)+'/'+str(r.get('ID'))+"?tab=overview"))
     loobj.addWidget(qlweb)
@@ -1773,9 +1776,14 @@ def get_summoner_img(ID, width=0, height=0):
     Returns:
         QPixmap: width x height summoner spell icon
     """
-    url = header.settings["DATA_FOLDER"] + 'summoner/' + SUMMONERS[str(ID)] + '.png'
+    if str(ID) not in SUMMONERS:
+        url = f'{header.settings["DATA_FOLDER"]}summoner/{LEGACY_SUMMONER[str(ID)]}.png'
+    else:
+        url = f'{header.settings["DATA_FOLDER"]}summoner/{SUMMONERS[str(ID)]}.png'
+    
     if os.path.isfile(url):
         return makeimg(url, width, height)
+    return get_scaled_resource('summonerspell', width, height)
 
 def makeimg(url, width=0, height=0):
     """retrieves image from disk
@@ -2394,6 +2402,10 @@ class App(QDialog):
         self.setWindowFlags(Qt.WindowMinimizeButtonHint
                             | Qt.WindowMaximizeButtonHint
                             | Qt.WindowCloseButtonHint)
+        # center on screen
+        desktop = QDesktopWidget()
+        self.move((desktop.screenGeometry().width() - self.width)/2,
+            (desktop.screenGeometry().height() - self.height)/2 - 50)
 
         color = qcolors.gray.name()
         rc('axes',edgecolor='#063B45')
