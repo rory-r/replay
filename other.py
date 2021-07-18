@@ -34,7 +34,8 @@ validops = {
         '<=':operator.le,
         '>=':operator.ge
         }
-validfields = ["kills","deaths","assists","kd","perfectkd","team","kp","gameLength","cs","cspm","gold","largestMultiKill","ASSISTS","BARON_KILLS","BARRACKS_KILLED","BOUNTY_LEVEL","CHAMPIONS_KILLED","CHAMPION_MISSION_STAT_0","CHAMPION_MISSION_STAT_1","CHAMPION_MISSION_STAT_2","CHAMPION_MISSION_STAT_3","CHAMPION_TRANSFORM","COMBAT_PLAYER_SCORE","CONSUMABLES_PURCHASED","DOUBLE_KILLS","DRAGON_KILLS","EXP","FRIENDLY_DAMPEN_LOST","FRIENDLY_HQ_LOST","FRIENDLY_TURRET_LOST","GAME_ENDED_IN_EARLY_SURRENDER","GAME_ENDED_IN_SURRENDER","GOLD_EARNED","GOLD_SPENT","HQ_KILLED","ID","INDIVIDUAL_POSITION","ITEM0","ITEM1","ITEM2","ITEM3","ITEM4","ITEM5","ITEM6","ITEMS_PURCHASED","KEYSTONE_ID","KILLING_SPREES","LARGEST_CRITICAL_STRIKE","LARGEST_KILLING_SPREE","LARGEST_MULTI_KILL","LEVEL","LONGEST_TIME_SPENT_LIVING","MAGIC_DAMAGE_DEALT_PLAYER","MAGIC_DAMAGE_DEALT_TO_CHAMPIONS","MAGIC_DAMAGE_TAKEN","MINIONS_KILLED","MUTED_ALL","NAME","NEUTRAL_MINIONS_KILLED","NEUTRAL_MINIONS_KILLED_ENEMY_JUNGLE","NEUTRAL_MINIONS_KILLED_YOUR_JUNGLE","NODE_CAPTURE","NODE_CAPTURE_ASSIST","NODE_NEUTRALIZE","NODE_NEUTRALIZE_ASSIST","NUM_DEATHS","OBJECTIVES_STOLEN","OBJECTIVES_STOLEN_ASSISTS","OBJECTIVE_PLAYER_SCORE","PENTA_KILLS","PERK0","PERK0_VAR1","PERK0_VAR2","PERK0_VAR3","PERK1","PERK1_VAR1","PERK1_VAR2","PERK1_VAR3","PERK2","PERK2_VAR1","PERK2_VAR2","PERK2_VAR3","PERK3","PERK3_VAR1","PERK3_VAR2","PERK3_VAR3","PERK4","PERK4_VAR1","PERK4_VAR2","PERK4_VAR3","PERK5","PERK5_VAR1","PERK5_VAR2","PERK5_VAR3","PERK_PRIMARY_STYLE","PERK_SUB_STYLE","PHYSICAL_DAMAGE_DEALT_PLAYER","PHYSICAL_DAMAGE_DEALT_TO_CHAMPIONS","PHYSICAL_DAMAGE_TAKEN","PING","PLAYERS_I_MUTED","PLAYERS_THAT_MUTED_ME","PLAYER_POSITION","PLAYER_ROLE","PLAYER_SCORE_0","PLAYER_SCORE_1","PLAYER_SCORE_10","PLAYER_SCORE_11","PLAYER_SCORE_2","PLAYER_SCORE_3","PLAYER_SCORE_4","PLAYER_SCORE_5","PLAYER_SCORE_6","PLAYER_SCORE_7","PLAYER_SCORE_8","PLAYER_SCORE_9","QUADRA_KILLS","SIGHT_WARDS_BOUGHT_IN_GAME","SKIN","SPELL1_CAST","SPELL2_CAST","SPELL3_CAST","SPELL4_CAST","STAT_PERK_0","STAT_PERK_1","STAT_PERK_2","SUMMON_SPELL1_CAST","SUMMON_SPELL2_CAST","TEAM","TEAM_EARLY_SURRENDERED","TEAM_OBJECTIVE","TEAM_POSITION","TIME_CCING_OTHERS","TIME_OF_FROM_LAST_DISCONNECT","TIME_PLAYED","TIME_SPENT_DISCONNECTED","TOTAL_DAMAGE_DEALT","TOTAL_DAMAGE_DEALT_TO_BUILDINGS","TOTAL_DAMAGE_DEALT_TO_CHAMPIONS","TOTAL_DAMAGE_DEALT_TO_OBJECTIVES","TOTAL_DAMAGE_DEALT_TO_TURRETS","TOTAL_DAMAGE_SELF_MITIGATED","TOTAL_DAMAGE_SHIELDED_ON_TEAMMATES","TOTAL_DAMAGE_TAKEN","TOTAL_HEAL","TOTAL_HEAL_ON_TEAMMATES","TOTAL_PLAYER_SCORE","TOTAL_SCORE_RANK","TOTAL_TIME_CROWD_CONTROL_DEALT","TOTAL_TIME_SPENT_DEAD","TOTAL_UNITS_HEALED","TRIPLE_KILLS","TRUE_DAMAGE_DEALT_PLAYER","TRUE_DAMAGE_DEALT_TO_CHAMPIONS","TRUE_DAMAGE_TAKEN","TURRETS_KILLED","UNREAL_KILLS","VICTORY_POINT_TOTAL","VISION_SCORE","VISION_WARDS_BOUGHT_IN_GAME","WARD_KILLED","WARD_PLACED","WARD_PLACED_DETECTOR","WAS_AFK","WAS_AFK_AFTER_FAILED_SURRENDER","WAS_EARLY_SURRENDER_ACCOMPLICE","WIN"]
+search_flag = False
+validfields = ["kills","deaths","assists","kd","kda", "perfectkd","team","kp","gameLength","cs","cspm","gold","gpm", "largestMultiKill", "gameVersion", "matchId", "filename", "ASSISTS","BARON_KILLS","BARRACKS_KILLED","BOUNTY_LEVEL","CHAMPIONS_KILLED","CHAMPION_MISSION_STAT_0","CHAMPION_MISSION_STAT_1","CHAMPION_MISSION_STAT_2","CHAMPION_MISSION_STAT_3","CHAMPION_TRANSFORM","COMBAT_PLAYER_SCORE","CONSUMABLES_PURCHASED","DOUBLE_KILLS","DRAGON_KILLS","EXP","FRIENDLY_DAMPEN_LOST","FRIENDLY_HQ_LOST","FRIENDLY_TURRET_LOST","GAME_ENDED_IN_EARLY_SURRENDER","GAME_ENDED_IN_SURRENDER","GOLD_EARNED","GOLD_SPENT","HQ_KILLED","ID","INDIVIDUAL_POSITION","ITEM0","ITEM1","ITEM2","ITEM3","ITEM4","ITEM5","ITEM6","ITEMS_PURCHASED","KEYSTONE_ID","KILLING_SPREES","LARGEST_CRITICAL_STRIKE","LARGEST_KILLING_SPREE","LARGEST_MULTI_KILL","LEVEL","LONGEST_TIME_SPENT_LIVING","MAGIC_DAMAGE_DEALT_PLAYER","MAGIC_DAMAGE_DEALT_TO_CHAMPIONS","MAGIC_DAMAGE_TAKEN","MINIONS_KILLED","MUTED_ALL","NAME","NEUTRAL_MINIONS_KILLED","NEUTRAL_MINIONS_KILLED_ENEMY_JUNGLE","NEUTRAL_MINIONS_KILLED_YOUR_JUNGLE","NODE_CAPTURE","NODE_CAPTURE_ASSIST","NODE_NEUTRALIZE","NODE_NEUTRALIZE_ASSIST","NUM_DEATHS","OBJECTIVES_STOLEN","OBJECTIVES_STOLEN_ASSISTS","OBJECTIVE_PLAYER_SCORE","PENTA_KILLS","PERK0","PERK0_VAR1","PERK0_VAR2","PERK0_VAR3","PERK1","PERK1_VAR1","PERK1_VAR2","PERK1_VAR3","PERK2","PERK2_VAR1","PERK2_VAR2","PERK2_VAR3","PERK3","PERK3_VAR1","PERK3_VAR2","PERK3_VAR3","PERK4","PERK4_VAR1","PERK4_VAR2","PERK4_VAR3","PERK5","PERK5_VAR1","PERK5_VAR2","PERK5_VAR3","PERK_PRIMARY_STYLE","PERK_SUB_STYLE","PHYSICAL_DAMAGE_DEALT_PLAYER","PHYSICAL_DAMAGE_DEALT_TO_CHAMPIONS","PHYSICAL_DAMAGE_TAKEN","PING","PLAYERS_I_MUTED","PLAYERS_THAT_MUTED_ME","PLAYER_POSITION","PLAYER_ROLE","PLAYER_SCORE_0","PLAYER_SCORE_1","PLAYER_SCORE_10","PLAYER_SCORE_11","PLAYER_SCORE_2","PLAYER_SCORE_3","PLAYER_SCORE_4","PLAYER_SCORE_5","PLAYER_SCORE_6","PLAYER_SCORE_7","PLAYER_SCORE_8","PLAYER_SCORE_9","QUADRA_KILLS","SIGHT_WARDS_BOUGHT_IN_GAME","SKIN","SPELL1_CAST","SPELL2_CAST","SPELL3_CAST","SPELL4_CAST","STAT_PERK_0","STAT_PERK_1","STAT_PERK_2","SUMMON_SPELL1_CAST","SUMMON_SPELL2_CAST","TEAM","TEAM_EARLY_SURRENDERED","TEAM_OBJECTIVE","TEAM_POSITION","TIME_CCING_OTHERS","TIME_OF_FROM_LAST_DISCONNECT","TIME_PLAYED","TIME_SPENT_DISCONNECTED","TOTAL_DAMAGE_DEALT","TOTAL_DAMAGE_DEALT_TO_BUILDINGS","TOTAL_DAMAGE_DEALT_TO_CHAMPIONS","TOTAL_DAMAGE_DEALT_TO_OBJECTIVES","TOTAL_DAMAGE_DEALT_TO_TURRETS","TOTAL_DAMAGE_SELF_MITIGATED","TOTAL_DAMAGE_SHIELDED_ON_TEAMMATES","TOTAL_DAMAGE_TAKEN","TOTAL_HEAL","TOTAL_HEAL_ON_TEAMMATES","TOTAL_PLAYER_SCORE","TOTAL_SCORE_RANK","TOTAL_TIME_CROWD_CONTROL_DEALT","TOTAL_TIME_SPENT_DEAD","TOTAL_UNITS_HEALED","TRIPLE_KILLS","TRUE_DAMAGE_DEALT_PLAYER","TRUE_DAMAGE_DEALT_TO_CHAMPIONS","TRUE_DAMAGE_TAKEN","TURRETS_KILLED","UNREAL_KILLS","VICTORY_POINT_TOTAL","VISION_SCORE","VISION_WARDS_BOUGHT_IN_GAME","WARD_KILLED","WARD_PLACED","WARD_PLACED_DETECTOR","WAS_AFK","WAS_AFK_AFTER_FAILED_SURRENDER","WAS_EARLY_SURRENDER_ACCOMPLICE","WIN"]
 textfields = ["NAME","SKIN","INDIVIDUAL_POSITION", "TEAM_POSITION", "WIN"]
 equivalent = {
     "Commencing Stopwatch"              :"Stopwatch",
@@ -75,18 +76,17 @@ PORT = b''
 
 
 def get_match_info(queue, dic):
-    if KEY == b'':
-        return
-    while True:
-        matchid = queue.get()
-        if matchid == 'DONE':
-            return
-        if matchid not in dic.keys():
-            j = client_get('lol-match-history/v1/games/' + str(matchid))
-            if j != '':
-                dic[matchid] = json.loads(j)
-            else:
-                return
+    if KEY != b'':
+        while True:
+            matchid = queue.get()
+            if matchid == 'DONE':
+                break
+            if matchid not in dic.keys():
+                j = client_get('lol-match-history/v1/games/' + str(matchid))
+                if j != '':
+                    dic[matchid] = json.loads(j)
+                else:
+                    break
 
 def init():
     global KEY
@@ -158,7 +158,6 @@ def download_patch(patch):
     # os.system(command)
     pass
 
-
 def download_json(patch, json_file):
     """downloads json from specific patch
 
@@ -200,7 +199,9 @@ def download_images(urls, local_paths):
     pool.close()
     pool.join()
 
-def download_legacy():
+def download_legacy_images():
+    """downloads images for legacy content
+    """
     data_folder = header.settings["DATA_FOLDER"]
         
     # download champion portraits
@@ -307,7 +308,6 @@ def update():
             folder = data_folder + 'rune/'
             if not os.path.exists(folder):
                 os.mkdir(folder)
-            print(RUNES)
             download_images(rune_urls, [folder + '%d.png'%r for r in RUNES.values()])
 
 
@@ -321,18 +321,17 @@ def update():
             urls.append(f'{url}{s}.png')
             paths.append(f'{folder}{s}_0.png')
         download_images(urls, paths)
-        print(SUMMONERS)
         header.settings["PATCH"] = patch
 
 def parse_search(query):
-    """parses query string into list of functions
+    """generates a list of functions from the query string
     
     Args:
         query (str): query string
     
     Returns:
-        list: list of boolean functions filters replays
-        func: boolean function to sort replays after filtering
+        list: list of boolean functions to filter replays
+        func: function to sort replays after filtering
     """
     fun_search = []
     fun_sort = 0
@@ -341,8 +340,7 @@ def parse_search(query):
     query = re.sub('[^a-z0-9 .><!=]', '', query.lower())
     q = list(filter(None, query.split(' ')))
     sortpos = q.index('sort') if 'sort' in q else -2
-    sort_arg = q[sortpos +
-                 1] if sortpos != -2 and sortpos + 1 < len(q) else None
+    sort_arg = q[sortpos + 1] if sortpos != -2 and sortpos + 1 < len(q) else None
     search_args = [
         i for i in range(len(q)) if i != sortpos and i != sortpos + 1
     ]
@@ -356,8 +354,8 @@ def parse_search(query):
     # Generates a function that
     #   returns value of arg for a given replay r
     # Returns a tuple containing that function and
-    # 0 if it returns a number
-    # 1 if it returns a string
+    # 0 if that function returns a number
+    # 1 if that function returns a string
     def argtofun(arg):
         if re.search('[a-zA-Z]', arg) or not len(arg):
             # argument is a field of the replay data
@@ -369,7 +367,9 @@ def parse_search(query):
             if arg in textfields:
                 return lambda r, a=arg: re.sub(' ','',r.get(a).lower()) if r.get(a) != None else None, 1
             else:
-                return lambda r, a=arg: int(r.geta(a)), 0
+                if hasattr(header.replays[0], arg):
+                    return lambda r, a=arg: float(getattr(r, a)), 0
+                return lambda r, a=arg: float(r.geta(a)), 0
         else:
             # argument is a number
             return lambda r, x=float(arg): x, 0
@@ -550,11 +550,15 @@ def build_lists():
                 ui.LEGACY_SUMMONER[s] = summoner[s]["id"]
 
 def search(text):
+    global search_flag
+    if search_flag:
+        return
+    search_flag = True
     from ui import display
-    fun_search, fun_sort = parse_search(text)
+    fun_filter, fun_sort = parse_search(text)
     prev = []
     result = [i for i in range(len(header.replays))]
-    for f in fun_search:
+    for f in fun_filter:
         prev = result
         result = []
         for i in prev:
@@ -562,15 +566,15 @@ def search(text):
                 result.append(i)
 
     if fun_sort:
-        print("fun sort")
-        print(result)
         fun_sort(result)
-        print(result)
+
     display(result)
+    search_flag = False
 
 def index_replays():
     """creates list of replay objects from replay files
     """
+    print("index_replays")
     minfopath = header.settings["DATA_FOLDER"]+'matchinfo'
     try:
         with open(minfopath, 'r') as file:
@@ -582,16 +586,14 @@ def index_replays():
     t1.start()
     for f in os.listdir(header.settings["REPLAY_FOLDER"]):
         if f.endswith('.rofl'):
-            print('IS ROFL: ',f)
             filename = header.settings["REPLAY_FOLDER"] + '\\' + f
             try:
                 header.replays.append(replay(filename, q))
             except:
                 print('failed: ', filename)
                 pass
-
-    q.put('DONE')
     t1.join()
+    q.put('DONE')
     header.EXTRA_INFO = dic
     with open(header.settings["DATA_FOLDER"] + 'matchinfo', 'w+') as f:
         json.dump(dic, f)
@@ -647,12 +649,10 @@ class replay:
             payloadHeaderOffset = UINT(fileheader[14:18])
             # payloadHeaderLength = UINT(fileheader[18:22])
             self.payloadOffset = UINT(fileheader[22:26])
-            print(self.payloadOffset)
 
             js = json.loads(data[metaheaderOffset:payloadHeaderOffset])
             self.matchId = UINT(data[payloadHeaderOffset:payloadHeaderOffset+8])
 
-            print('matchId:', self.matchId)
             queue.put(self.matchId)
 
             self.gameVersion = js['gameVersion']
@@ -676,10 +676,16 @@ class replay:
             self.deaths = int(self.get('NUM_DEATHS'))
             self.assists = int(self.get('ASSISTS'))
             if self.deaths == 0:
-                self.kd = self.kills + self.assists
+                self.kd = self.kills
+                self.kda = self.kills + self.assists
+                if self.kd == 0:
+                    self.kd = 1
+                    if self.kda == 0:
+                        self.kda = 1 
                 self.perfectkd = True
             else:
-                self.kd = (self.kills + self.assists) / self.deaths
+                self.kd = self.kills / self.deaths
+                self.kda = (self.kills + self.assists) / self.deaths
                 self.perfectkd = False
 
             self.team = self.get('TEAM')
@@ -691,7 +697,6 @@ class replay:
 
             self.kp = math.floor(self.kills / teamkills * 100)
             self.gameLength = int(js['gameLength'])
-            print('gamelength', self.gameLength)
             self.cs = int(self.get('MINIONS_KILLED'))
             self.cspm = self.cs / self.gameLength * 60000
             self.gold = int(self.get('GOLD_EARNED'))

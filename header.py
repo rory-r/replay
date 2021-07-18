@@ -1,13 +1,11 @@
 import os
 import gettext
 
-SLASH='\\'
-
 settings = {
     "LOCKFILE_PATH"     : r'C:/Riot Games/League of Legends/lockfile',
     "LOCALE"            : 'en_US',
     "PATCH"             : '9.3.1',
-    "DATA_FOLDER"       : os.getenv('APPDATA')+SLASH+'Replay Parser'+SLASH,
+    "DATA_FOLDER"       : f"{os.getenv('APPDATA')}/Replay Parser/",
     "UPDATE"            : True,
     "LEGACY"            : True,
     "REPLAY_FOLDER"     : "",
@@ -21,6 +19,7 @@ settings = {
     "CLIENT"            : True,
     "LANGUAGE"          : "English"
 }
+
 NUM_THREADS = 16
 replays = []
 EXTRA_INFO = {}

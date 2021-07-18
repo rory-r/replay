@@ -1,6 +1,6 @@
 import header
-from other import set_setting, search, save, download_patch,\
-    init, index_replays, update, build_lists, SUMMONERS, download_legacy
+from other import (set_setting, search, save, download_patch, init,
+    index_replays, update, build_lists, SUMMONERS, download_legacy_images)
 
 import os
 import subprocess
@@ -10,12 +10,13 @@ from functools import lru_cache
 from enum import Enum
 from abc import ABC, abstractmethod
 
-from PyQt5.QtWidgets import QApplication, QLabel, QDialog, QVBoxLayout,\
-     QHBoxLayout, QLineEdit, QGraphicsOpacityEffect, QWidget, QStackedLayout,\
-     QGridLayout, QScrollArea, QGraphicsRotation, QSizePolicy, QSpacerItem, \
-     QDesktopWidget
-from PyQt5.QtCore import QByteArray, Qt, pyqtSignal, QRectF, QRect, QSize,\
-    QPoint, QPointF, QVariantAnimation, QAbstractAnimation, QThread
+from PyQt5.QtWidgets import (QApplication, QLabel, QDialog, QVBoxLayout,
+     QHBoxLayout, QLineEdit, QGraphicsOpacityEffect, QWidget, QStackedLayout,
+     QGridLayout, QScrollArea, QGraphicsRotation, QSizePolicy, QSpacerItem,
+     QDesktopWidget)
+from PyQt5.QtCore import (QByteArray, Qt, pyqtSignal, QRectF, QRect, QSize,
+    QPoint, QPointF, QVariantAnimation, QAbstractAnimation, QThread, QObject,
+    QRunnable, QThreadPool, pyqtSlot)
 from PyQt5.QtGui import QColor, QPixmap, QPainter, QImage, QBrush, QTransform
 
 from matplotlib import rc, pyplot
@@ -25,6 +26,7 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 import numpy as np
 
+DEBUG = False
 SCALE = 0.5
 WARNING_WIDGET = []
 warnings = []
@@ -102,13 +104,17 @@ class color:
     loss        = "rgb(255,35,69)"
 
 class fsize:
-    font_size="25"
-    stats_font_size="25"
-    name_font_size="20"
-    kda_font_size="40"
-    win_font_size="25"
-    padding="20"
+    font_size=25
+    stats_font_size=25
+    name_font_size=20
+    kda_font_size=40
+    win_font_size=25
+    padding=20
 
+
+def print_debug(*args):
+    if DEBUG:
+        print(*args)
 
 def get_style(name):
     """Returns Qt Style Sheet (must call make_styles first)
@@ -131,9 +137,9 @@ def make_styles():
     """
     def inactive():
         return ("*{"
-            "font-size:" + str(int(int(fsize.font_size) * SCALE)) + 'px;' +
+            "font-size:" + str(int(fsize.font_size * SCALE)) + 'px;' +
             "border-style: solid;"
-            "border-width: 1px;" + "padding: 3px; padding-right:" + fsize.padding +
+            "border-width: 1px;" + "padding: 3px; padding-right:" + str(fsize.padding) +
             "px;"
             "border-color:" + color.dark_border + ';'
             "background:" + color.bg + ';'
@@ -155,9 +161,9 @@ def make_styles():
         "}")
     def active():
         return ("*{"
-        "font-size:" + str(int(int(fsize.font_size) * SCALE)) + 'px;' +
+        "font-size:" + str(int(fsize.font_size * SCALE)) + 'px;' +
         "border-style: solid;"
-        "border-width: 1px;" + "padding-right: " + fsize.padding +
+        "border-width: 1px;" + "padding-right: " + str(fsize.padding) +
         "px;"
         "border-color:" + color.light_border +
         "qlineargradient(x1:0, y1:0, x2:0, y2:1, stop: 0 " +
@@ -171,7 +177,7 @@ def make_styles():
         "}")
     def main():
         return ("*{"
-            "font-size:" + str(int(int(fsize.font_size) * SCALE)) + 'px;' +
+            "font-size:" + str(int(fsize.font_size * SCALE)) + 'px;' +
             "color:" + color.item + ";"
             "background:" + color.bg + ';' + 
             "border: 0px;" 
@@ -223,62 +229,62 @@ def make_styles():
     def info():
         return ("*{"
         "font-family: 'Segoe UI';" + "font-size:" +
-        str(int(int(fsize.stats_font_size) * SCALE)) + 'px;' + "color:" + 
+        str(int(fsize.stats_font_size * SCALE)) + 'px;' + "color:" + 
         color.item + ';' + "}")
     def info_hover():
         return ("*{"
         "font-family: 'Segoe UI';" + "font-size:" +
-        str(int(int(fsize.stats_font_size) * SCALE)) + 'px;' + "color:" +
+        str(int(fsize.stats_font_size * SCALE)) + 'px;' + "color:" +
         color.ico + ';' + "}")
     def stats():
         return ("*{"
         "font-family: 'Segoe UI';"
-        "font-size:" + str(int(int(fsize.stats_font_size) * SCALE)) + 'px;'
+        "font-size:" + str(int(fsize.stats_font_size * SCALE)) + 'px;'
         "color:" + color.ico + ';' + "font-weight:bold;" + "}")
     def stats_hover():
         return ("*{"
         "font-family: 'Segoe UI';"
-        "font-size:" + str(int(int(fsize.stats_font_size) * SCALE)) + 'px;'
+        "font-size:" + str(int(fsize.stats_font_size * SCALE)) + 'px;'
         "color:" + color.ico_hover + ';' + "font-weight:bold;" + "}")
     def scoreboard():
         return ("*{"
         "font-family: 'Segoe UI';"
-        "font-size:" + str(int(int(fsize.stats_font_size) * SCALE)) + 'px;'
+        "font-size:" + str(int(fsize.stats_font_size * SCALE)) + 'px;'
         "color:" + color.ico_hover + ';' + "font-weight:900;" + "}")
     def scoreboard_yellow():
         return ("*{"
         "font-family: 'Segoe UI';"
-        "font-size:" + str(int(int(fsize.stats_font_size) * SCALE)) + 'px;'
+        "font-size:" + str(int(fsize.stats_font_size * SCALE)) + 'px;'
         "color:" + color.yellow + ';' + "font-weight:900;" + "}")
     def name_yellow():
         return ("*{"
         "font-family: 'Segoe UI';"
-        "font-size:" + str(int(int(fsize.name_font_size) * SCALE)) + 'px;'
+        "font-size:" + str(int(fsize.name_font_size * SCALE)) + 'px;'
         "color:" + color.yellow + ';' + "font-weight:bold;" + "}")
     def name_gray():
         return ("*{"
         "font-family: 'Segoe UI';"
-        "font-size:" + str(int(int(fsize.name_font_size) * SCALE)) + 'px;'
+        "font-size:" + str(int(fsize.name_font_size * SCALE)) + 'px;'
         "color:" + color.gray + ';' + "font-weight:bold;" + "}")
     def win():
         return ("*{"
         "font-family: 'Segoe UI';"
-        "font-size:" + str(int(int(fsize.win_font_size) * SCALE)) + 'px;'
+        "font-size:" + str(int(fsize.win_font_size * SCALE)) + 'px;'
         "color:" + color.win + ';' + "font-weight:bold;" + "}")
     def loss():
         return ("*{"
         "font-family: 'Segoe UI';"
-        "font-size:" + str(int(int(fsize.win_font_size) * SCALE)) + 'px;'
+        "font-size:" + str(int(fsize.win_font_size * SCALE)) + 'px;'
         "color:" + color.loss + ';' + "font-weight:bold;" + "}")
     def kda():
         return ("*{"
         "font-family: 'Segoe UI';"
-        "font-size:" + str(int(int(fsize.kda_font_size) * SCALE)) + 'px;'
+        "font-size:" + str(int(fsize.kda_font_size * SCALE)) + 'px;'
         "color:" + color.ico + ';' + "font-weight:bold;" + "}")
     def kda_hover():
         return ("*{"
         "font-family: 'Segoe UI';"
-        "font-size:" + str(int(int(fsize.kda_font_size) * SCALE)) + 'px;'
+        "font-size:" + str(int(fsize.kda_font_size * SCALE)) + 'px;'
         "color:" + color.ico_hover + ';' + "font-weight:bold;" + "}")
     stylesheets['inactive'] = inactive
     stylesheets['active'] = active
@@ -383,10 +389,10 @@ def thousands_separator(string):
     """Adds thousands separator to number strings
     
     Args:
-        string (str): Number (9000)
+        string (str): Number (e.g. 9000)
     
     Returns:
-        str: Number (9,000)
+        str: Number (e.g. 9,000)
     """
     string2 = ''
     if header.settings["LOCALE"] == 'en_US':
@@ -586,12 +592,9 @@ def display(searchresult):
     Args:
         searchresult (list): list of replay indices
     """
-    if len(searchresult) == 0:
-        print('SEARCH RESULT EMPTY')
-        return
-    global pages, runesReforged, tv, qw_result, current_search
+    global pages, runesReforged, tv, qw_result, current_search, PARENTPTR, SCALE
     current_search = searchresult
-    # for r in searchresult:
+
     try:
         qw = QWidget()
         # first search
@@ -607,6 +610,12 @@ def display(searchresult):
         qw_result.setWidget(qw)
         lo_vert = QVBoxLayout(qw)
         longest = 0
+        if len(searchresult) == 0:
+            q = QLabel("Your search did not match any replays.", PARENTPTR)
+            q.setStyleSheet(get_style("stats"))
+            lo_vert.addWidget(q)
+            return
+
         for i in searchresult:
             r = header.replays[i]
 
@@ -618,18 +627,21 @@ def display(searchresult):
                 if n >= 10:
                     r += 1
                 return r
-
+            
             length = num_digits(r.kills)+num_digits(r.deaths)+num_digits(r.assists)
             if length > longest:
                 longest = length
 
+        w = 0
         for i in searchresult:
             replay_widget = replay_layout(header.replays[i], longest)
+            w = max(replay_widget.sizeHint().width(), w)
             replay_widget.clicked.connect(lambda i=i: display_match(i))
             lo_vert.addWidget(replay_widget)
 
-
-        # print('6')
+        w = max(int(1.08*w), PARENTPTR.sizeHint().width())
+        h = max(400*SCALE, PARENTPTR.sizeHint().height())
+        PARENTPTR.resize(w, h)
     except Exception as ex:
         print(type(ex).__name__, ex.args)
 
@@ -675,7 +687,7 @@ def replay_layout(r, longest):
             lowidget.append(q, style)
             return q
         
-        print('replay layout1')
+        print_debug('replay layout1')
         if header.settings['VIS'][VIS.CHAMP.value]:
             champIcon = get_champ_img(r.get('SKIN'), r.gameVersion)
             circle = circular_img(champIcon, 10, 120*SCALE)
@@ -717,9 +729,9 @@ def replay_layout(r, longest):
             lo_runes.setSpacing(0)
             lo_summrunes.addLayout(lo_runes)
 
-        print('1.3')
+        print_debug('1.3')
         if header.settings['VIS'][VIS.SUMMS.value]:
-            print('summs')
+            print_debug('summs')
             id1 = 33
             id2 = 33
             if r.matchId in header.EXTRA_INFO.keys():
@@ -744,7 +756,7 @@ def replay_layout(r, longest):
             lo_summrunes.addLayout(lo_summs)
         lo_summrunes.setSpacing(0)
 
-        print('1.4')
+        print_debug('1.4')
         if header.settings['VIS'][VIS.KDA.value]:
             lo_wrap = QHBoxLayout()
             kda = qltext(
@@ -805,7 +817,7 @@ def replay_layout(r, longest):
             lo_multipos.addWidget(ql)
         lo_multipos.setSpacing(0)
 
-        print('2')
+        print_debug('2')
 
         if header.settings['VIS'][VIS.ITEMS.value]:
             def qlitem(num, style):
@@ -829,15 +841,15 @@ def replay_layout(r, longest):
 
             lo_items.setSpacing(0)
 
-        print('3')
+        print_debug('3')
         lo_items.setSizeConstraint(QHBoxLayout.SetMinimumSize)
         lo_items_width = 60 * 7 * SCALE + 8
         if header.settings['VIS'][VIS.KD.value] or header.settings['VIS'][VIS.KP.value]:
 
             if r.perfectkd:
-                kdstr = '%.2f' % r.kd + ':0'
+                kdstr = '%.2f' % r.kda + ':0'
             else:
-                kdstr = '%.2f' % r.kd + ':1'
+                kdstr = '%.2f' % r.kda + ':1'
 
             kpstr = str(r.kp) + '%'
 
@@ -906,21 +918,21 @@ def replay_layout(r, longest):
         lo_itemstats.addSpacing(10)
 
 
-        print('3.5')
-        print(len(header.settings['VIS']), VIS.TEAMS.value)
+        print_debug('3.5')
+        print_debug(len(header.settings['VIS']), VIS.TEAMS.value)
         if header.settings['VIS'][VIS.TEAMS.value]:
             y = 0
             for p in r.data:
                 champ = QLabel(PARENTPTR)
                 if p['NAME'] == header.settings['NAME']:
-                    print('MASKING')
+                    print_debug('MASKING')
                     champ.setPixmap(circular_img(get_champ_img(p['SKIN'], r.gameVersion), 10, 25 * SCALE))
                     style = 'stats'
                 else:
                     champ.setPixmap(get_champ_img(p['SKIN'],r.gameVersion ,25 * SCALE, 25 * SCALE))
                     style = 'info'
                 name = qltext(p['NAME'],style)
-                print(name.sizeHint().width())
+                print_debug(name.sizeHint().width())
                 width = 200 * SCALE
                 if name.sizeHint().width() > width:
                     for i in range(1, 4):
@@ -947,7 +959,7 @@ def replay_layout(r, longest):
         # 'PERK_PRIMARY_STYLE'
         # 'PERK_SUB_STYLE'
 
-        print('4')
+        print_debug('4')
         if header.settings['VIS'][VIS.TIME.value]:
             qltime = qltext(readable_time(r.gameLength))
             lo_endstats.addWidget(qltime)
@@ -995,7 +1007,7 @@ def replay_layout(r, longest):
             btntab.append(loading)
             dlbtns.append((btntab, r.gameVersion))
 
-        print('5')
+        print_debug('5')
         if (r.get('WIN') == 'Win'):
             rcolor = qcolors.win
         else:
@@ -1037,7 +1049,7 @@ def replay_layout(r, longest):
         lowidget.setFixedHeight(225*SCALE)
     except Exception as ex:
         print(type(ex).__name__, ex.args)
-    print('replay_layout returned')
+    print_debug('replay_layout returned')
     return lowidget
 
 def disable_btns(patch):
@@ -2344,22 +2356,28 @@ def make_loading_layout(layout):
     layout.addLayout(lo)
     layout.addStretch(1)
 
+class sig(QObject):
+    finished = pyqtSignal()
+    text = pyqtSignal(str)
+
+class initialization(QRunnable):
+    signal = sig()
+    @pyqtSlot()
+    def run(self):
+        self.signal.text.emit(_('Indexing replay files'))
+        index_replays()
+        if header.settings["UPDATE"]:
+            self.signal.text.emit(_('Updating images'))
+            update()
+        if header.settings["LEGACY"]:
+            download_legacy_images()
+        self.signal.text.emit(_('Building lists'))
+        build_lists()
+        self.signal.finished.emit()
+
 class App(QDialog):
     def __init__(self):
         super().__init__()
-        def initialization():
-            if 'loadingql' in globals():
-                loadingql.setText(_('Indexing replay files'))
-            index_replays()
-            if header.settings["UPDATE"] and 'loadingql' in globals():
-                loadingql.setText(_('Updating images'))
-                update()
-            if header.settings["LEGACY"]:
-                download_legacy()
-            if 'loadingql' in globals():
-                loadingql.setText(_('Building lists'))
-            build_lists()
-
         self.title = 'Replay Parser'
         self.left = 0
         self.top = 0
@@ -2369,8 +2387,12 @@ class App(QDialog):
         self.setStyleSheet(get_style('main'))
         init()
         self.initUI()
-        initialization()
-        set_main_layout()
+        t = initialization()
+        t.signal.finished.connect(set_main_layout)
+        t.signal.text.connect(lambda s:loadingql.setText(s))
+        self.threadpool = QThreadPool()
+        self.threadpool.start(t)
+        
 
     def mousePressEvent(self, event):
         focused_widget = QApplication.focusWidget()
@@ -2430,6 +2452,7 @@ class App(QDialog):
         TOP_LAYOUT.addWidget(sett_widget)
         self.setLayout(TOP_LAYOUT)
         self.show()
+        print("INIT UI")
 
     def closeEvent(self, event):
         save()
