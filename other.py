@@ -22,6 +22,7 @@ CHAMPIONS = []
 ITEMS = defaultdict(list)
 KEYSTONES = [6161, 6162, 6164, 6261, 6262, 6263, 6361, 6362, 6363]
 RUNES = {}
+rune_urls={}
 SUMMONERS = {}
 aliases = {'ez':'Ezreal', 'gp':'Gangplank', 'j4':'JarvanIV', 'tf':'TwistedFate', 'ww':'Warwick', 'mf':'MissFortune'}
 import operator
@@ -286,37 +287,37 @@ def update():
         for c in CHAMPIONS:
             urls.append(f'{url}{c}.png')
             paths.append(f'{folder}{c}.png')
-        download_images(urls, paths)
+        # download_images(urls, paths)
 
         # download item images
         url = 'https://ddragon.leagueoflegends.com/cdn/' + patch + '/img/item/'
         folder = data_folder + 'item/'
         if not os.path.exists(folder):
             os.mkdir(folder)
-        urls, paths = ([], [])
+        # urls, paths = ([], [])
         for i in ITEMS.values():
             for j in i:
                 urls.append(f'{url}{j}.png')
                 paths.append(f'{folder}{j}.png')
-        download_images(urls, paths)
+        # download_images(urls, paths)
 
         # download rune images
         with open(data_folder + 'json\\runesReforged.json') as file:
             rune_json = file.read()
             url = 'https://ddragon.leagueoflegends.com/cdn/img/'
-            rune_urls = [url + r[7:] for r in re.findall('icon":".*?(?=")', rune_json)]
             folder = data_folder + 'rune/'
             if not os.path.exists(folder):
                 os.mkdir(folder)
-            download_images(rune_urls, [folder + '%d.png'%r for r in RUNES.values()])
-
+            for k in RUNES.keys():
+                urls.append(url + rune_urls[k])
+                paths.append(f'{RUNES[k]}.png')
 
         # download summoner spell images
         url = 'https://ddragon.leagueoflegends.com/cdn/' + '9.13.1' + '/img/spell/'
         folder = data_folder + 'legacy/summoner/'
         if not os.path.exists(folder):
             os.mkdir(folder)
-        urls, paths = ([], [])
+        # urls, paths = ([], [])
         for s in SUMMONERS.values():
             urls.append(f'{url}{s}.png')
             paths.append(f'{folder}{s}_0.png')
@@ -512,9 +513,11 @@ def build_lists():
             for i in rune:
                 # rune tree
                 RUNES[i['name']] = i['id']
+                rune_urls[i['name']] = i['icon']
                 # keystone runes
                 for r in i['slots'][0]['runes']:
                     RUNES[r['name']] = r['id']
+                    rune_urls[r['name']] = r['icon']
 
     if not os.path.exists(folder + 'summoner.json'):
         ui.warn(folder + 'summoner.json DNE')
